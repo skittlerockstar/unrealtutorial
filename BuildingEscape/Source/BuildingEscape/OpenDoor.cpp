@@ -19,7 +19,7 @@ void UOpenDoor::BeginPlay()
 {
 	Super::BeginPlay();
 
-	MyPawn = GetWorld()->GetFirstPlayerController()->GetPawn();
+	//MyPawn = GetWorld()->GetFirstPlayerController()->GetPawn();
 
 	// ...
 	
@@ -29,7 +29,7 @@ void UOpenDoor::OpenDoor()
 {
 	AActor* Owner = GetOwner();
 	FRotator OldRotation = Owner->GetActorRotation();
-	FRotator NewRotation = FRotator(0.0f, OldRotation.Yaw+1.0f, 0.0f);
+	FRotator NewRotation = FRotator(0.0f,90.0f, 0.0f);
 	Owner->SetActorRotation(NewRotation);
 }
 
@@ -37,7 +37,7 @@ void UOpenDoor::CloseDoor()
 {
 	AActor* Owner = GetOwner();
 	FRotator NewRotation = FRotator(0.0f,0.0f, 0.0f);
-	Owner->SetActorRotation(NewRotation);
+		Owner->SetActorRotation(NewRotation);
 }
 
 
@@ -45,12 +45,23 @@ void UOpenDoor::CloseDoor()
 void UOpenDoor::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-	if (PressurePlate->IsOverlappingActor(MyPawn)) {
+	if (GetTotalMassOnPlate() > 50.0f) {
 		OpenDoor();
 		LastDoorOpen = GetWorld()->GetTimeSeconds();
 	}
 	if (GetWorld()->GetTimeSeconds() - LastDoorOpen > DoorCloseDelay) {
 		CloseDoor();
 	}
+}
+
+float UOpenDoor::GetTotalMassOnPlate() {
+	float TotalMass = 0.0f;
+	TArray<AActor*> OverLappingActors;
+	PressurePlate->GetOverlappingActors(OverLappingActors);
+	for (const auto* Actor : OverLappingActors) {
+		TotalMass += Actor->FindComponentByClass<UPrimitiveComponent>()->GetMass();
+		UE_LOG(LogTemp, Warning, TEXT("OBJ : %s"), *Actor->GetName());
+	}
+	return TotalMass;
 }
 

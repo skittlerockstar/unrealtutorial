@@ -36,5 +36,5 @@ private:
 		float DoorCloseDelay = 1.f;
 	float LastDoorOpen;
 		AActor* MyPawn;
-
+		float GetTotalMassOnPlate();
 };

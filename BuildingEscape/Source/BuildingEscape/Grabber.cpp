@@ -19,6 +19,7 @@ void UGrabber::BeginPlay()
 	Super::BeginPlay();
 	FindPhysicsHandleComponent();
 	SetupInputComponent();
+
 }
 
 /// Look for attached Physics Handle
